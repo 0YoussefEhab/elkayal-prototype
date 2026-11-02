@@ -121,6 +121,7 @@ tr:last-child td{border-bottom:0}
 .tcard small{color:var(--muted);font-size:.8rem}.tcard .chips{gap:4px;margin-top:4px}
 .slot.priv,.tcard.priv{border-style:dashed;border-inline-start:3px solid var(--warn);background:var(--warn-bg)}
 .list label.row{cursor:pointer}
+.form label.chip{flex-direction:row;color:var(--fg);font-size:.88rem}
 .sbox{position:relative;display:inline-block}
 .sugg{position:absolute;top:calc(100% + 4px);inset-inline:0;min-width:260px;z-index:15;background:var(--surface);border:1px solid var(--line);border-radius:6px;box-shadow:0 8px 24px #0003;max-height:300px;overflow:auto}
 .sugg button{display:flex;flex-direction:column;align-items:flex-start;width:100%;border:0;border-bottom:1px solid var(--line);background:none;padding:8px 10px;text-align:start}
@@ -387,7 +388,7 @@ new(){return `<div class="head"><div><h1>تسجيل طالب جديد</h1><p>أ�
 <div class="panel"><form class="form" id="newForm"><label>اسم الطالب<input id="sn" required placeholder="الاسم ثلاثي"></label><label>رقم ولي الأمر<input id="sp" placeholder="01xxxxxxxxx"></label>
 <label>السنة<select id="sg">${GRADES.map(g=>`<option>${g}</option>`).join("")}</select></label><label>القسم<select id="ss"><option>عربي</option><option>لغات</option></select></label>
 <label>نظام الدفع<select id="spl"><option>شهر (4 حصص)</option><option>بالحصة</option></select></label><label>دفع دلوقتي؟<select id="spn"><option>أيوه</option><option>لأ</option></select></label>
-<div class="full"><span class="muted" style="font-size:.85rem">استلم مذكرات؟ (اختار اللي دفعها)</span><div class="chips" style="margin-top:6px">${notesCatalog.map((n,i)=>`<label class="chip"><input type="checkbox" id="nc${i}">${n.t} · ${n.p} ج</label>`).join("")}</div></div>
+<div class="full"><span class="muted" style="font-size:.85rem">استلم مذكرات؟ (اختار اللي دفعها)</span><div class="chips" id="newNotes" style="margin-top:6px">${newNotesHTML(GRADES[0])}</div></div>
 <button class="btn pri full">تسجيل الطالب وطباعة الكود</button></form></div>`},
 shift(){return V.asst(assistants.find(a=>a.id===ME[role]))},
 me(){return V.stu(students[4])},
@@ -436,6 +437,7 @@ ${s.diffDue?`<button class="btn" data-act="diff">استلام الفرق ${s.dif
 r.dataset.id=s.id}
 
 function nCalc(){let t=0;document.querySelectorAll("[id^=nb]:checked:not(:disabled)").forEach(x=>t+=+x.dataset.p);if($("#useP")?.checked)document.querySelectorAll("[id^=pp]:checked").forEach(x=>t-=+x.dataset.a);t=Math.max(0,t);const el=$("#nTot");if(el)el.textContent=t+" ج";return t}
+function newNotesHTML(g){const l=notesCatalog.filter(n=>n.g===g);return l.map((n,i)=>`<label class="chip"><input type="checkbox" id="nc${i}">${n.t.split(" · ")[0]} · ${n.p} ج</label>`).join("")||'<span class="muted" style="font-size:.85rem">مفيش مذكرات للسنة دي لسه</span>'}
 function render(){stopCam();if(view!=="stu")expelArm=false;$("#nav").innerHTML=NAV[role].map(([k,l])=>`<button data-v="${k}" class="${k===view?"on":""}">${l}</button>`).join("");$("#main").innerHTML=V[view]();drawQR();applySearch()}
 function openStu(id){cur=students.find(x=>x.id===id);view="stu";q="";render();scrollTo(0,0)}
 document.addEventListener("click",e=>{const t=e.target.closest("button")||e.target.closest("tr[data-open],tr[data-asst]");if(!t)return;
@@ -476,7 +478,7 @@ if(id==="code"){const box=$("#cs");if(!v){box.hidden=true;return}box.innerHTML=s
 if(id==="ncode"){const box=$("#ns");if(!v){box.hidden=true;return}box.innerHTML=suggHTML(students.filter(s=>s.name.includes(v)||s.id.toLowerCase().includes(v.toLowerCase())||s.phone.includes(v)||s.parent.includes(v)),"data-npick");box.hidden=false}
 if(id.startsWith("px")){PM[e.target.dataset.c][e.target.dataset.gr]=+e.target.value}});
 document.addEventListener("click",e=>{if(!e.target.closest(".sbox"))document.querySelectorAll(".sugg").forEach(x=>x.hidden=true)});
-document.addEventListener("change",e=>{if(e.target.id==="am"){am=+e.target.value;render()}if(e.target.id==="pvG"){pvGrade=e.target.value;render()}if(e.target.id==="useP"){$("#pBox").hidden=!e.target.checked;nCalc()}if(/^(nb|pp)/.test(e.target.id||""))nCalc();if(e.target.id==="curG"){curG=e.target.value;render()}if(e.target.id?.startsWith("px"))toast("اتحفظ السعر");if(e.target.id==="fg"){filt.g=e.target.value;render()}if(e.target.id==="fs"){filt.s=e.target.value;render()}if(e.target.id?.startsWith("pm"))toast("اتحفظت الصلاحية")});
+document.addEventListener("change",e=>{if(e.target.id==="am"){am=+e.target.value;render()}if(e.target.id==="pvG"){pvGrade=e.target.value;render()}if(e.target.id==="useP"){$("#pBox").hidden=!e.target.checked;nCalc()}if(/^(nb|pp)/.test(e.target.id||""))nCalc();if(e.target.id==="sg"){$("#newNotes").innerHTML=newNotesHTML(e.target.value)}if(e.target.id==="curG"){curG=e.target.value;render()}if(e.target.id?.startsWith("px"))toast("اتحفظ السعر");if(e.target.id==="fg"){filt.g=e.target.value;render()}if(e.target.id==="fs"){filt.s=e.target.value;render()}if(e.target.id?.startsWith("pm"))toast("اتحفظت الصلاحية")});
 document.addEventListener("submit",e=>{e.preventDefault();const f=e.target.id;
 if(f==="customForm"){cur.custom=$("#cOn").checked?+$("#cVal").value:null;render();toast(cur.custom?`سعر الحصة لـ ${cur.name} بقى ${cur.custom} ج`:"رجع لسعر السنتر")}
 if(f==="priceForm"){const ns=+$("#pS").value,nm=+$("#pM").value,d=nm-pricing.month;pricing.allowWaive=$("#pA").checked;if(ns!==pricing.session||nm!==pricing.month){pricing.history.unshift({d:"2 نوفمبر",s:ns,m:nm,why:$("#pW").value||"تعديل سعر"});if(d>0)students.forEach(x=>{if(x.plan==="شهر"&&x.left>0&&!x.custom)x.diffDue=Math.round(d*x.left/4)});pricing.session=ns;pricing.month=nm;toast(d>0?"السعر اتغير · اتحسب الفرق للي دافعين شهر":"السعر اتغير")}else toast("اتحفظ");render()}
