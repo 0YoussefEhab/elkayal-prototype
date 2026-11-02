@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>منصة مستر عمر الكيال</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
+<style>
+/* Layout: sidebar app shell (RTL), chalkboard-green accent + chalk-yellow highlight, graphite neutrals */
+:root{
+ --bg:#f3f4f2;--surface:#ffffff;--surface2:#eceeeb;--line:#d9dcd7;--fg:#1d211f;--muted:#646b67;
+ --accent:#2f5d50;--accent-fg:#ffffff;--chalk:#c9a227;--good:#2e7d4f;--warn:#b7791f;--bad:#b23a3a;
+ --good-bg:#e3f1e8;--warn-bg:#f8eed9;--bad-bg:#f6e1e1;
+ --display:"Readex Pro","IBM Plex Sans Arabic",Tahoma,sans-serif;--body:"IBM Plex Sans Arabic",Tahoma,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+ --bg:#141716;--surface:#1c201e;--surface2:#242927;--line:#323835;--fg:#e8ebe9;--muted:#99a19d;
+ --accent:#6fae98;--accent-fg:#0f1513;--chalk:#e0bd4a;--good:#6cc58f;--warn:#e2ad55;--bad:#e27b7b;
+ --good-bg:#1f3227;--warn-bg:#3a2f1a;--bad-bg:#3a2020;color-scheme:dark}}
+:root[data-theme="dark"]{
+ --bg:#141716;--surface:#1c201e;--surface2:#242927;--line:#323835;--fg:#e8ebe9;--muted:#99a19d;
+ --accent:#6fae98;--accent-fg:#0f1513;--chalk:#e0bd4a;--good:#6cc58f;--warn:#e2ad55;--bad:#e27b7b;
+ --good-bg:#1f3227;--warn-bg:#3a2f1a;--bad-bg:#3a2020;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.6;margin:0}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance}
+h1{font-size:1.5rem}h2{font-size:1.1rem}h3{font-size:.95rem}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--chalk);outline-offset:2px}
+.app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+aside{background:var(--surface);border-inline-start:0;border-inline-end:1px solid var(--line);padding:20px 14px;display:flex;flex-direction:column;gap:18px;position:sticky;top:0;height:100vh}
+.brand{display:flex;gap:10px;align-items:center}
+.brand img{width:44px;height:44px;border-radius:50%;background:#fff;padding:3px}
+.brand b{font-family:var(--display);display:block;line-height:1.2}
+.brand small{color:var(--muted);font-size:.78rem}
+.roles{display:grid;grid-template-columns:repeat(4,1fr);background:var(--surface2);border-radius:8px;padding:3px}
+.roles button{border:0;background:none;padding:6px 0;border-radius:6px;font-size:.82rem}
+.roles button.on{background:var(--surface);box-shadow:0 1px 2px #0002;font-weight:600}
+nav{display:flex;flex-direction:column;gap:2px}
+nav button{border:0;background:none;text-align:start;padding:9px 12px;border-radius:6px;color:var(--muted)}
+nav button.on{background:var(--surface2);color:var(--fg);font-weight:600;box-shadow:inset -3px 0 0 var(--accent)}
+.side-foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--muted)}
+.iconbtn{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:5px 10px}
+main{padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));min-width:0;max-width:1180px;width:100%;margin-inline:auto}
+@media(min-width:900px){main{padding-inline:32px}}
+.head{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:end;margin-bottom:20px}
+.head p{margin:2px 0 0;color:var(--muted)}
+.filters{display:flex;gap:8px;flex-wrap:wrap}
+select,input{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:7px 10px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:20px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.kpi span{color:var(--muted);font-size:.82rem}
+.kpi b{display:block;font-family:var(--display);font-size:1.6rem;font-variant-numeric:tabular-nums}
+.kpi em{font-style:normal;font-size:.78rem;color:var(--good)}
+.grid2{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-bottom:16px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px;min-width:0}
+.panel>h2{margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.9rem;font-variant-numeric:tabular-nums}
+th{color:var(--muted);font-weight:500;text-align:start;font-size:.8rem;border-bottom:1px solid var(--line);padding:8px}
+td{padding:9px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.pill{display:inline-block;padding:1px 9px;border-radius:99px;font-size:.78rem;font-weight:500}
+.p-good{background:var(--good-bg);color:var(--good)}.p-warn{background:var(--warn-bg);color:var(--warn)}.p-bad{background:var(--bad-bg);color:var(--bad)}.p-n{background:var(--surface2);color:var(--muted)}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:8px 14px;font-weight:500}
+.btn.pri{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.btn.sm{padding:4px 10px;font-size:.82rem}
+.bars{display:flex;align-items:end;gap:8px;height:170px;padding-top:10px;border-bottom:1px solid var(--line)}
+.bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:end;height:100%;gap:4px;font-size:.75rem;color:var(--muted)}
+.bar i{display:block;width:100%;max-width:34px;background:var(--accent);border-radius:4px 4px 0 0}
+.bar.last i{background:var(--chalk)}
+.barlbl{display:flex;gap:8px;font-size:.72rem;color:var(--muted)}.barlbl span{flex:1;text-align:center}
+.list{display:flex;flex-direction:column}
+.list .row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.list .row:last-child{border:0}
+.muted{color:var(--muted)}.num{font-variant-numeric:tabular-nums}
+.scan{display:grid;grid-template-columns:1fr 1.2fr;gap:16px}
+.cam{aspect-ratio:1;max-width:100%;background:#111;border-radius:8px;position:relative;overflow:hidden;display:grid;place-items:center;color:#9aa}
+.cam::before{content:"";position:absolute;inset:18%;border:2px solid var(--chalk);border-radius:10px}
+.cam::after{content:"";position:absolute;left:18%;right:18%;height:2px;background:var(--chalk);top:30%;animation:sweep 2.2s ease-in-out infinite alternate}
+@keyframes sweep{to{top:68%}}
+@media(prefers-reduced-motion:reduce){.cam::after{animation:none}}
+.stu-card{display:flex;flex-direction:column;gap:12px}
+.stu-top{display:flex;gap:12px;align-items:center}
+.avatar{width:48px;height:48px;border-radius:50%;background:var(--surface2);display:grid;place-items:center;font-family:var(--display);color:var(--accent)}
+.kv{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kv div{background:var(--surface2);border-radius:6px;padding:8px 10px}
+.kv span{font-size:.75rem;color:var(--muted);display:block}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+.notice{border-radius:6px;padding:10px 12px;font-size:.88rem}
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 18px;border-radius:8px;font-size:.9rem;z-index:20}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:flex;gap:6px;align-items:center;border:1px solid var(--line);border-radius:6px;padding:6px 10px;font-size:.88rem}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form label{display:flex;flex-direction:column;gap:4px;font-size:.85rem;color:var(--muted)}
+.full{grid-column:1/-1}
+.perm td:not(:first-child){text-align:center}
+.qr{width:150px;height:150px;background:#fff;padding:8px;border-radius:6px}
+.profile{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center}
+.gr{display:flex;align-items:center;gap:8px}.gr .track{flex:1;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden}.gr .track i{display:block;height:100%;background:var(--accent)}
+.mobtop{display:none}
+.login{min-height:100vh;display:grid;place-items:center;padding-block:24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.lcard{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:28px;width:min(360px,100%);display:flex;flex-direction:column;gap:12px}
+.lcard img{width:72px;height:72px;border-radius:50%;background:#fff;padding:4px;align-self:center}
+.lcard h1{text-align:center}.lcard>p{text-align:center;margin:-8px 0 4px}
+.lcard label{display:flex;flex-direction:column;gap:4px;font-size:.85rem;color:var(--muted)}
+.lerr{color:var(--bad);margin:0;font-size:.85rem}
+.logout{border:0;background:none;color:var(--muted);text-decoration:underline;padding:0;font-size:.8rem}
+.net{display:flex;gap:8px;align-items:center;border:1px solid var(--line);background:var(--surface2);border-radius:6px;padding:6px 10px;font-size:.8rem;text-align:start}
+.net i{width:8px;height:8px;border-radius:50%;background:var(--good);flex:none}.net.off i{background:var(--warn)}.net.off{border-color:var(--warn)}
+.tlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.tcard{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:start;background:var(--surface);border:1px solid var(--line);border-inline-start:3px solid var(--accent);border-radius:8px;padding:10px 12px}
+.tcard.on{outline:2px solid var(--accent)}.tcard.off{opacity:.65}.tcard.off>span:first-of-type{text-decoration:line-through}
+.tcard small{color:var(--muted);font-size:.8rem}.tcard .chips{gap:4px;margin-top:4px}
+.slot.priv,.tcard.priv{border-style:dashed;border-inline-start:3px solid var(--warn);background:var(--warn-bg)}
+.list label.row{cursor:pointer}
+.sbox{position:relative;display:inline-block}
+.sugg{position:absolute;top:calc(100% + 4px);inset-inline:0;min-width:260px;z-index:15;background:var(--surface);border:1px solid var(--line);border-radius:6px;box-shadow:0 8px 24px #0003;max-height:300px;overflow:auto}
+.sugg button{display:flex;flex-direction:column;align-items:flex-start;width:100%;border:0;border-bottom:1px solid var(--line);background:none;padding:8px 10px;text-align:start}
+.sugg button:last-child{border:0}.sugg button:hover,.sugg button:focus-visible{background:var(--surface2)}
+.slot .loc{color:var(--fg);opacity:.8}
+.week{display:grid;grid-template-columns:repeat(7,minmax(130px,1fr));gap:8px;overflow-x:auto;padding-bottom:6px}
+.day{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:6px;min-height:200px}
+.day.today{border-color:var(--accent)}
+.day h3{font-size:.88rem;padding-bottom:6px;border-bottom:1px solid var(--line);margin-bottom:2px;display:flex;justify-content:space-between;align-items:center;gap:4px}
+.slot{display:flex;flex-direction:column;align-items:flex-start;text-align:start;border:1px solid var(--line);border-inline-start:3px solid var(--accent);background:var(--surface2);border-radius:6px;padding:6px 8px;gap:0;line-height:1.4}
+.slot.lang{border-inline-start-color:var(--chalk)}
+.slot.on{outline:2px solid var(--accent);outline-offset:1px}
+.slot b{font-size:.82rem}.slot span{font-size:.85rem;font-weight:600}.slot small{font-size:.74rem;color:var(--muted)}
+
+tr.click{cursor:pointer}tr.click:hover td{background:var(--surface2)}
+.switch{display:flex;gap:8px;align-items:center}
+@media(max-width:860px){
+ .app{grid-template-columns:1fr}aside{position:static;height:auto;flex-direction:column}nav{flex-direction:row;overflow-x:auto}nav button{white-space:nowrap}.side-foot{margin:0}
+ .grid2,.scan,.form{grid-template-columns:1fr}.profile{grid-template-columns:1fr;justify-items:start}
+}
+</style>
+
+</head>
+<body>
+<div class="login" id="login"><form class="lcard" id="loginForm">
+<img src="data:image/png;base64,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" alt="شعار الكيال">
+<h1>مستر عمر الكيال</h1><p class="muted">ادخل بحسابك</p>
+<label>اسم المستخدم<input id="lu" autocomplete="username" placeholder="omar" required></label>
+<label>كلمة السر<input id="lp" type="password" autocomplete="current-password" required></label>
+<p class="lerr" id="lerr" hidden>اسم المستخدم أو كلمة السر غلط</p>
+<button class="btn pri">دخول</button>
+<details class="muted" style="font-size:.8rem"><summary>حسابات التجربة</summary>
+omar · manager · assistant · student<br>كلمة السر لكلهم: 1234</details></form></div>
+<div class="app" id="app" hidden>
+<aside>
+ <div class="brand"><img src="data:image/png;base64,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" alt="شعار الكيال"><div><b>مستر عمر الكيال</b><small>رياضيات · لوحة السنتر</small></div></div>
+ <div class="roles" role="tablist" aria-label="عرض كـ">
+  <button data-role="teacher" class="on">المدرس</button><button data-role="manager">مدير</button><button data-role="assistant">أسستانت</button><button data-role="student">طالب</button>
+ </div>
+ <nav id="nav"></nav>
+ <button class="net" id="net" title="جرّب وضع بدون نت"><i></i><span>متصل · كل حاجة متزامنة</span></button>
+ <div class="side-foot"><button class="logout" id="logout">خروج</button><button class="iconbtn" id="theme">الوضع الداكن</button></div>
+</aside>
+<main id="main"></main>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const GRADES=["أولى إعدادي","تانية إعدادي","تالتة إعدادي","أولى ثانوي عام","تانية ثانوي عام","تالتة ثانوي عام","أولى ثانوي بكالوريا","تانية ثانوي بكالوريا","تالتة ثانوي بكالوريا"];
+const SECS=["عربي","لغات"];
+const DAYS=["السبت","الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة"],TODAY=2;
+const fmt=t=>{const h=Math.floor(t),m=String(Math.round(t%1*60)).padStart(2,"0");return `${h>12?h-12:h}:${m} ${h>=12?"م":"ص"}`};
+const CENTERS=["سيزار","هاوس","فيوتشر"],TG=["تالتة إعدادي","أولى ثانوي عام","تانية ثانوي عام","تالتة ثانوي عام"];
+const gradePrice={"تالتة إعدادي":50,"أولى ثانوي عام":60,"تانية ثانوي عام":70,"تالتة ثانوي عام":80},centerAdj={"سيزار":0,"هاوس":10,"فيوتشر":-5};
+const PM={};CENTERS.forEach(c=>{PM[c]={};TG.forEach(g=>PM[c][g]=gradePrice[g]+centerAdj[c])});
+const GROUPS=[];let selG=null;
+TG.forEach((gr,gi)=>["عربي","لغات"].forEach((sec,si)=>[0,1].forEach(k=>{
+ const idx=gi*4+si*2+k,d1=(gi+k*3+si)%3,base=[10,12,14,16,18,20][(gi+si*2+k)%6]+(k?.5:0);
+ GROUPS.push({id:"g"+idx,grade:gr,sec,center:CENTERS[(gi+si+k)%3],name:"مجموعة "+(k+1),n:18+(idx*5)%17,price:null,today:null,slots:[{d:d1,t:base},{d:d1+3,t:base}]})})));
+const gPrice=g=>g.today??g.price??PM[g.center][g.grade];
+const F=["يوسف","مريم","عمر","سلمى","آدم","نور","زياد","فرح","مالك","جنى","كريم","ملك","حمزة","روان","سيف","هنا"],LN=["أحمد","خالد","حسن","محمود","طارق","سامي","عادل","إبراهيم","وليد","أشرف","ياسر","هشام"];
+const students=Array.from({length:48},(_,i)=>{const g=GROUPS[Math.floor(i/3)];return {id:"K"+(2401+i),name:F[i%16]+" "+LN[(i*5)%12],grade:g.grade,sec:g.sec,group:g.id,plan:i%3?"شهر":"حصة",
+ left:i%3?(4-(i%4)):0,att:8+(i*3)%7,total:14,hw:62+(i*7)%37,exam:[14+(i%6),17-(i%4),12+(i%8)],paidNext:i===4,
+ notes:i%4?["مذكرة الجبر"]:[],phone:"011"+(23456780+i*17),parent:"010"+(12345670+i*31),verified:i%3===0,parentBad:i%7===3,custom:i===2||i===7?40:null,diffDue:0}});
+const pricing={session:60,month:200,oldMonth:200,allowWaive:true,history:[{d:"1 سبتمبر",s:60,m:200,why:"بداية السنة"}]};
+const grpOf=s=>GROUPS.find(g=>g.id===s.group);
+const sessPrice=s=>s.custom??gPrice(grpOf(s));
+const todayGroups=()=>GROUPS.flatMap(g=>g.slots.filter(x=>x.d===TODAY).map(x=>({g,t:x.t}))).sort((a,b)=>a.t-b.t);
+let curG=null,online=true,pending=0;
+const upd=()=>{const n=$("#net");n.classList.toggle("off",!online);n.querySelector("span").textContent=online?"متصل · كل حاجة متزامنة":`بدون نت · ${pending} عملية مستنية ترفع`};
+const saved=m=>{if(online)toast(m);else{pending++;upd();toast(m+" · اتحفظ على الجهاز")}};
+let q="",cur=null;students[1].plan="شهر";students[1].left=3;students[1].diffDue=30;
+const notesCatalog=[];TG.forEach((g,i)=>[["مذكرة الجبر",90],["مذكرة الهندسة",80],["مراجعة الشهر",40]].forEach(([t,p])=>notesCatalog.push({t:t+" · "+g,g,p:p+i*15})));
+students.forEach((s,i)=>{s.notes=i%4?[notesCatalog.find(n=>n.g===s.grade).t]:[];s.paperPaid=i%5===0||i%4===0?[{d:"22 أكتوبر",amt:10},{d:"29 أكتوبر",amt:10},{d:"2 نوفمبر",amt:15}]:[]});
+const sessions=[{d:"12 أكتوبر",n:58},{d:"15 أكتوبر",n:61},{d:"19 أكتوبر",n:55},{d:"22 أكتوبر",n:64},{d:"26 أكتوبر",n:60},{d:"29 أكتوبر",n:67},{d:"2 نوفمبر",n:52}];
+const MONTHS=["نوفمبر 2026","أكتوبر 2026","سبتمبر 2026"];
+const mkAtt=(k,mi)=>{const days=[[1,2],[1,3,5,8,10,12,15,17,19,22,24,26,29,31],[5,7,10,12,14,17,19,21,24,26,28]][mi],mn=["نوفمبر","أكتوبر","سبتمبر"][mi];
+ return days.map((d,j)=>{const st=(d*7+k*3)%11===0?"غياب":(d+k)%6===0?"متأخر":"حاضر";return {d:d+" "+mn,st,inT:st==="غياب"?"—":st==="متأخر"?"4:25 م":"3:"+(30+(d*k)%25)+" م",outT:st==="غياب"?"—":"8:"+String((d*3+k)%50).padStart(2,"0")+" م"}})};
+const assistants=[
+ {id:"a1",n:"أ. منة الله",role:"أسستانت مدير",in:"3:40 م",out:"—",g:"تالتة ثانوي",rate:180,ledger:[{mi:1,type:"pay",amt:2340,d:"1 نوفمبر",why:"مرتب أكتوبر"}]},
+ {id:"a2",n:"أ. محمد سعيد",role:"أسستانت",in:"3:55 م",out:"—",g:"أولى ثانوي",rate:150,ledger:[{mi:1,type:"ded",amt:300,d:"30 أكتوبر",days:"15 و 22 أكتوبر",why:"غياب من غير ما يبلغ قبلها"},{mi:1,type:"pay",amt:1650,d:"1 نوفمبر",why:"مرتب أكتوبر بعد الخصم"}]},
+ {id:"a3",n:"أ. سارة نبيل",role:"أسستانت",in:"1:10 م",out:"3:30 م",g:"إعدادي",rate:150,ledger:[{mi:1,type:"pay",amt:1950,d:"1 نوفمبر",why:"مرتب أكتوبر"}]}];
+assistants.forEach((a,k)=>a.att=[0,1,2].map(mi=>mkAtt(k+1,mi)));
+const ME={manager:"a1",assistant:"a2"};
+const centerFee={"سيزار":10,"هاوس":12,"فيوتشر":8};
+const NOW=19.2;
+const expenses=[{t:"أقلام سبورة (علبة)",amt:85,by:"أ. منة الله",d:"النهارده"},{t:"حبر طابعة",amt:240,by:"أ. محمد سعيد",d:"النهارده"},{t:"تصوير ورق امتحان",amt:120,by:"أ. منة الله",d:"أمس"}];
+let notesIncome=380,curA=null,selT=null,am=0,pvGrade=TG[3],expelArm=false;
+const PRIV=[{id:"p1",grade:"تانية ثانوي عام",center:"سيزار",day:2,t:17.5,price:100,count:1,students:["K2425","K2426"],paid:{K2425:true},makeup:["الأحد 4:00 م"],asst:"a2",then:"g9",done:false},
+ {id:"p2",grade:"أولى ثانوي عام",center:"هاوس",day:5,t:13,price:90,count:2,students:["K2413"],paid:{},makeup:["السبت 12:30 م","الثلاثاء 12:30 م"],asst:"a1",then:null,done:false}];
+const isAdmin=()=>role==="teacher"||role==="manager";
+const aName=id=>assistants.find(a=>a.id===id)?.n||"المستر";
+const gLabel=g=>`${g.grade} ${g.sec} · ${g.name}`;
+let role="teacher",view="dash",filt={g:"الكل",s:"الكل"};
+const NAV={teacher:[["dash","الإحصائيات"],["students","الطلبة"],["sessions","جدول الأسبوع"],["today","جدول اليوم"],["private","حصص برايفت"],["notes","المذكرات"],["prices","الأسعار"],["staff","الأسستانت"],["perms","الصلاحيات"]],
+ manager:[["finance","الحسابات"],["today","جدول اليوم"],["scan","تسجيل الحضور"],["notespay","دفع المذكرات"],["private","حصص برايفت"],["students","الطلبة"],["sessions","جدول الأسبوع"],["staff","الأسستانت"],["new","طالب جديد"],["shift","صفحتي"]],
+ assistant:[["today","جدول اليوم"],["scan","تسجيل الحضور"],["notespay","دفع المذكرات"],["private","حصص برايفت"],["new","طالب جديد"],["shift","صفحتي"]],student:[["me","صفحتي"]]};
+const $=s=>document.querySelector(s);
+const toast=m=>{const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(t._);t._=setTimeout(()=>t.hidden=true,2200)};
+const opts=(a,v)=>["الكل",...a].map(x=>`<option ${x===v?"selected":""}>${x}</option>`).join("");
+const payPill=s=>s.plan==="حصة"?`<span class="pill p-n">بالحصة</span>`:s.left>0?`<span class="pill p-good">باقي ${s.left} حصص</span>`:`<span class="pill p-bad">الشهر خلص</span>`;
+const avg=a=>Math.round(a.reduce((x,y)=>x+y,0)/a.length*10)/10;
+const filtered=()=>students.filter(s=>(filt.g==="الكل"||s.grade===filt.g)&&(filt.s==="الكل"||s.sec===filt.s));
+const searchBox=(ph="بحث بالاسم أو الكود أو رقم التليفون")=>`<span class="sbox"><input type="search" id="q" value="${q}" placeholder="${ph}" aria-label="بحث" autocomplete="off" style="min-width:min(260px,100%)"><div class="sugg" id="qs" hidden></div></span>`;
+const suggHTML=(list,attr)=>list.slice(0,8).map(s=>`<button type="button" ${attr}="${s.id}"><span><b>${s.name}</b> <span class="muted num">${s.id}</span></span><small class="muted">${s.grade} · ${s.sec} · ${grpOf(s).center}</small></button>`).join("")||'<p class="muted" style="padding:8px 10px;margin:0;font-size:.85rem">مفيش طالب بالاسم ده</p>';
+const vpill=s=>s.verified?`<span class="pill p-good">متأكد منه</span>`:`<span class="pill p-warn">غير مؤكد</span>`;
+function applySearch(){const t=q.trim();document.querySelectorAll("main table tr, main .list .row, main .slot").forEach(r=>{if(r.querySelector("th"))return;r.hidden=!!t&&!r.textContent.includes(t)})}
+const filterBar=()=>`<div class="filters">${searchBox()}<select id="fg" aria-label="السنة">${opts(GRADES,filt.g)}</select><select id="fs" aria-label="القسم">${opts(SECS,filt.s)}</select></div>`;
+
+const V={
+dash(){const f=filtered(),mx=Math.max(...sessions.map(s=>s.n));
+return `<div class="head"><div><h1>صباح الخير يا مستر عمر</h1><p>الإثنين 2 نوفمبر · حصة تالتة ثانوي شغالة دلوقتي</p></div>${filterBar()}</div>
+<div class="kpis">
+<div class="kpi"><span>طلبة مسجلين</span><b>${f.length*23}</b><em>+18 الشهر ده</em></div>
+<div class="kpi"><span>حضور النهارده</span><b>52</b><em>من 71 متوقع</em></div>
+<div class="kpi"><span>نسبة الحضور (شهر)</span><b>84%</b><em>+3% عن سبتمبر</em></div>
+<div class="kpi"><span>إيراد نوفمبر</span><b>18,450 ج</b><em>شهور + حصص + مذكرات</em></div>
+<div class="kpi"><span>متوسط الواجب</span><b>${avg(f.map(s=>s.hw))||0}%</b><em style="color:var(--muted)">آخر 4 واجبات</em></div></div>
+${V.finBlock()}
+<div class="grid2"><div class="panel"><h2>الحضور في آخر 7 حصص</h2>
+<div class="bars">${sessions.map((s,i)=>`<div class="bar ${i==6?"last":""}"><span class="num">${s.n}</span><i style="height:${s.n/mx*85}%"></i></div>`).join("")}</div>
+<div class="barlbl">${sessions.map(s=>`<span>${s.d}</span>`).join("")}</div></div>
+<div class="panel"><h2>محتاج متابعة</h2><div class="list">
+<div class="row"><span>9 طلبة شهرهم خلص ولسه مدفعوش</span><span class="pill p-bad">دفع</span></div>
+<div class="row"><span>6 طلبة غابوا آخر حصتين</span><span class="pill p-warn">غياب</span></div>
+<div class="row"><span>11 طالب واجبهم أقل من 60%</span><span class="pill p-warn">واجب</span></div>
+<div class="row"><span>4 طلبة قالوا هيدفعوا الحصة الجاية</span><span class="pill p-n">تنبيه</span></div></div></div></div>
+<div class="panel"><h2>توزيع الطلبة حسب السنة</h2><div class="tbl"><table><tr><th>السنة</th><th>عربي</th><th>لغات</th><th>نسبة الحضور</th><th>متوسط الامتحانات</th></tr>
+${GRADES.map((g,i)=>`<tr><td>${g}</td><td class="num">${30+i*7%25}</td><td class="num">${18+i*5%20}</td><td class="num">${78+i*3%15}%</td><td class="num">${(13+i%6)}/20</td></tr>`).join("")}</table></div></div>`},
+students(){const f=filtered();return `<div class="head"><div><h1>الطلبة</h1><p>${f.length} طالب في النتيجة · اضغط على الطالب لفتح صفحته</p></div>${filterBar()}</div>
+<div class="panel tbl"><table><tr><th>الكود</th><th>الاسم</th><th>السنة</th><th>القسم</th><th>الحضور</th><th>الواجب</th><th>متوسط الامتحان</th><th>ولي الأمر</th><th>سعر الحصة</th><th>الدفع</th><th></th></tr>
+${f.map(s=>`<tr class="click" data-open="${s.id}"><td class="num muted">${s.id}</td><td><b>${s.name}</b></td><td>${s.grade}</td><td>${s.sec}</td><td class="num">${s.att}/${s.total}</td><td class="num">${s.hw}%</td><td class="num">${avg(s.exam)}/20</td><td class="num">${s.parent} ${vpill(s)}</td><td class="num">${sessPrice(s)} ج ${s.custom?'<span class="pill p-n">خاص</span>':""}</td><td>${payPill(s)}</td><td><button class="btn sm" data-open="${s.id}">الصفحة</button></td></tr>`).join("")||`<tr><td colspan="11" class="muted">مفيش طلبة بالفلتر ده</td></tr>`}</table></div>`},
+sessions(){const f=GROUPS.filter(g=>(filt.g==="الكل"||g.grade===filt.g)&&(filt.s==="الكل"||g.sec===filt.s));
+return `<div class="head"><div><h1>جدول الحصص</h1><p>${f.length} مجموعة · ${f.length*2} حصة في الأسبوع · دوس على أي حصة تشوف حضورها</p></div>${filterBar()}</div>
+<div class="week">${DAYS.map((d,di)=>{const sl=f.flatMap(g=>g.slots.filter(x=>x.d===di).map(x=>({g,t:x.t}))).sort((x,y)=>x.t-y.t);
+return `<div class="day ${di===2?"today":""}"><h3>${d}${di===2?' <span class="pill p-good">النهارده</span>':""}</h3>${sl.map(({g,t})=>`<button class="slot ${g.sec==="لغات"?"lang":""} ${selG===g.id?"on":""}" data-g="${g.id}"><b class="num">${fmt(t)}</b><span>${g.grade}</span><small>${g.sec} · ${g.name} · ${g.n} طالب</small><small class="loc">سنتر ${g.center} · ${gPrice(g)} ج${g.today!=null?" (النهارده)":""}</small>${di===TODAY&&g.cancel?'<span class="pill p-bad" style="font-size:.7rem">ملغية النهارده</span>':""}${di===TODAY&&g.delay?`<span class="pill p-warn" style="font-size:.7rem">متأخرة ${g.delay} د</span>`:""}${g.slots.some(x=>x.moved&&x.d===di)?'<span class="pill p-warn" style="font-size:.7rem">اتغير الميعاد</span>':""}</button>`).join("")}${""+PRIV.filter(p=>p.day===di).map(p=>`<div class="slot priv"><b class="num">${fmt(p.t)}</b><span>برايفت · ${p.grade}</span><small>${p.students.length} طالب · ${aName(p.asst)}</small><small class="loc">سنتر ${p.center} · ${p.price} ج</small>${p.then?`<small>بعدها يكمل: ${gLabel(GROUPS.find(x=>x.id===p.then))}</small>`:""}</div>`).join("")}${sl.length||PRIV.some(p=>p.day===di)?"":'<p class="muted" style="font-size:.82rem">مفيش حصص</p>'}</div>`}).join("")}</div>
+${selG?V.groupLog(GROUPS.find(g=>g.id===selG)):""}`},
+groupLog(g){return `<div class="grid2" style="margin-top:16px"><div class="panel"><h2>تغيير ميعاد حصة</h2><form class="form" id="moveForm">
+<label>أنهي حصة<select id="mvSlot">${g.slots.map((x,i)=>`<option value="${i}">${DAYS[x.d]} ${fmt(x.t)}</option>`).join("")}</select></label>
+<label>اليوم الجديد<select id="mvDay">${DAYS.map((d,i)=>`<option value="${i}">${d}</option>`).join("")}</select></label>
+<label>الساعة<input type="time" id="mvTime" value="${String(Math.floor(g.slots[0].t+1)).padStart(2,"0")}:00"></label>
+<label>السنتر<select id="mvCenter">${CENTERS.map(c=>`<option ${c===g.center?"selected":""}>${c}</option>`).join("")}</select></label>
+<button class="btn pri full">حفظ الميعاد وإبلاغ الطلبة</button></form></div>
+<div class="panel"><h2>سعر حصة المجموعة دي</h2><p class="muted" style="margin:0 0 10px;font-size:.88rem">سعر سنتر ${g.center} لـ ${g.grade}: ${PM[g.center][g.grade]} ج</p>
+<form class="form" id="gpForm"><label>سعر ثابت للمجموعة<input type="number" id="gpFix" value="${g.price??""}" placeholder="زي السنتر"></label>
+<label>سعر النهارده بس<input type="number" id="gpToday" value="${g.today??""}" placeholder="مفيش تغيير"></label>
+<button class="btn pri full">حفظ السعر</button></form></div></div>
+<div class="panel tbl" style="margin-top:16px"><h2>${g.grade} · ${g.sec} · ${g.name} · سنتر ${g.center}<span class="muted" style="font-size:.85rem;font-family:var(--body)">${g.slots.map(x=>DAYS[x.d]+" "+fmt(x.t)).join(" و ")}</span></h2>
+<table><tr><th>التاريخ</th><th>الحضور</th><th>غياب</th><th>دفع حصة</th><th>شهور اتدفعت</th><th>سجّل</th></tr>
+${sessions.slice().reverse().map((s,i)=>{const n=g.n-((i*3+g.n)%7);return `<tr><td>${s.d}</td><td class="num">${n}</td><td class="num">${g.n-n}</td><td class="num">${2+i%4}</td><td class="num">${i%3?1:g.n-6}</td><td>${assistants[i%3].n}</td></tr>`}).join("")}</table></div>`},
+notes(){return `<div class="head"><div><h1>المذكرات</h1><p>المدرس والأسستانت الرئيسي بس يقدروا يضيفوا مذكرة</p></div>${searchBox("بحث في المذكرات")}</div>
+<div class="grid2"><div class="panel tbl"><h2>المذكرات الحالية</h2><table><tr><th>المذكرة</th><th>السنة</th><th>السعر</th><th>اتباع</th></tr>
+${notesCatalog.map((n,i)=>`<tr><td>${n.t}</td><td>${n.g}</td><td class="num">${n.p} ج</td><td class="num">${40+i*13}</td></tr>`).join("")}</table></div>
+<div class="panel"><h2>إضافة مذكرة</h2><form class="form" id="noteForm"><label class="full">اسم المذكرة<input id="nt" required placeholder="مثال: مذكرة المتجهات"></label>
+<label>السنة<select id="ng">${GRADES.map(g=>`<option>${g}</option>`).join("")}</select></label><label>السعر (جنيه)<input id="np" type="number" value="80"></label>
+<button class="btn pri full">إضافة المذكرة</button></form></div></div>`},
+adminBox(s){return `<div class="grid2"><div class="panel"><h2>بيانات التواصل</h2><div class="list">
+<div class="row"><span>تليفون الطالب</span><b class="num">${s.phone}</b></div>
+<div class="row"><span>ولي الأمر</span><span class="num">${s.parent} ${vpill(s)}</span></div>
+<div class="row"><span>الحالة</span><span>${s.expelled?'<span class="pill p-bad">مطرود</span>':`<button class="btn sm" id="expel" style="color:var(--bad)">${expelArm?"متأكد؟ دوس تاني للطرد":"طرد الطالب"}</button>`}</span></div>
+<div class="row"><span>المذكرات</span><span>${s.notes.join("، ")||"لا يوجد"}</span></div></div></div>
+<div class="panel"><h2>سعر الحصة للطالب ده</h2><p class="muted" style="margin:0 0 10px;font-size:.88rem">سعر السنتر الحالي ${pricing.session} ج. حدد سعر أقل لو الطالب ليه خصم.</p>
+<form class="filters" id="customForm"><label class="switch"><input type="checkbox" id="cOn" ${s.custom?"checked":""}> سعر خاص</label><input type="number" id="cVal" value="${s.custom??pricing.session-20}" style="width:100px"> ج <button class="btn pri sm">حفظ</button></form></div></div>`},
+prices(){const disc=students.filter(s=>s.custom);return `<div class="head"><div><h1>الأسعار</h1><p>سعر السنتر بيتطبق على كل الطلبة ما عدا اللي ليهم سعر خاص</p></div>${searchBox("بحث في الطلبة اللي ليهم خصم")}</div>
+<div class="panel tbl" style="margin-bottom:16px"><h2>سعر الحصة حسب السنتر والسنة<span class="muted" style="font-size:.82rem;font-family:var(--body)">عدّل الرقم ويتحفظ لوحده</span></h2><table><tr><th>السنتر</th>${TG.map(g=>`<th>${g}</th>`).join("")}</tr>
+${CENTERS.map((c,ci)=>`<tr><td><b>${c}</b></td>${TG.map((g,gi)=>`<td><input type="number" id="px${ci}_${gi}" data-c="${c}" data-gr="${g}" value="${PM[c][g]}" style="width:80px"> ج</td>`).join("")}</tr>`).join("")}</table></div>
+<div class="grid2"><div class="panel"><h2>تغيير سعر السنتر</h2><form class="form" id="priceForm">
+<label>سعر الحصة (ج)<input type="number" id="pS" value="${pricing.session}"></label><label>سعر الشهر · 4 حصص (ج)<input type="number" id="pM" value="${pricing.month}"></label>
+<label class="full">السبب<input id="pW" placeholder="مثال: نقل لسنتر جديد"></label>
+<label class="full switch" style="flex-direction:row;color:var(--fg)"><input type="checkbox" id="pA" ${pricing.allowWaive?"checked":""}> الأسستانت يقدر يعفي الطالب من فرق الشهر</label>
+<button class="btn pri full">تطبيق السعر الجديد على الكل</button></form>
+<p class="muted" style="font-size:.82rem;margin:10px 0 0">اللي دافعين شهر قبل التغيير هيتطلب منهم الفرق عند أول حضور.</p></div>
+<div class="panel"><h2>سجل الأسعار</h2><div class="list">${pricing.history.map(h=>`<div class="row"><span>${h.d} · ${h.why}</span><span class="num">حصة ${h.s} · شهر ${h.m}</span></div>`).join("")}</div></div></div>
+<div class="panel tbl"><h2>طلبة بسعر خاص <span class="pill p-n">${disc.length}</span></h2><table><tr><th>الكود</th><th>الاسم</th><th>السنة</th><th>سعر الحصة</th></tr>
+${disc.map(s=>`<tr class="click" data-open="${s.id}"><td class="num muted">${s.id}</td><td>${s.name}</td><td>${s.grade}</td><td class="num">${s.custom} ج</td></tr>`).join("")}</table></div>`},
+finStats(){const tg=todayGroups().filter(({g})=>!g.cancel),done=tg.filter(({g,t})=>t+(g.delay||0)/60<NOW),rows={};
+CENTERS.forEach(c=>rows[c]={c,n:0,att:0,rev:0,acc:0});
+done.forEach(({g})=>{const c=g.todayCenter||g.center,att=Math.round(g.n*.85),r=rows[c];r.n++;r.att+=att;r.rev+=att*gPrice(g)+(g.paper?g.paper.amt*att:0);r.acc+=att*centerFee[c]});
+PRIV.filter(p=>p.day===TODAY).forEach(p=>{const r=rows[p.center];r.n++;r.att+=p.students.length;r.rev+=Object.values(p.paid).filter(Boolean).length*p.price;r.acc+=p.students.length*centerFee[p.center]});
+const last=done.sort((a,b)=>b.t-a.t)[0];let lastS=null;if(last){const g=last.g,c=g.todayCenter||g.center,att=Math.round(g.n*.85);lastS={g,t:last.t,c,att,rev:att*gPrice(g),acc:att*centerFee[c]}}
+const L=Object.values(rows),tot=L.reduce((x,r)=>x+r.rev,0)+notesIncome,acc=L.reduce((x,r)=>x+r.acc,0),exp=expenses.filter(e=>e.d==="النهارده").reduce((x,e)=>x+e.amt,0);
+return {L,tot,acc,exp,lastS}},
+finBlock(){const F=V.finStats(),n=x=>x.toLocaleString("en-US");
+return `<div class="panel" style="margin-bottom:16px"><h2>حساب النهارده<span class="muted" style="font-size:.82rem;font-family:var(--body)">لحد ${fmt(NOW)} · بيتحدث مع كل حصة تخلص</span></h2>
+<div class="kpis" style="margin-bottom:12px"><div class="kpi"><span>إيراد اليوم</span><b>${n(F.tot)} ج</b><em style="color:var(--muted)">حصص + ورق + مذكرات ${n(notesIncome)} ج</em></div>
+<div class="kpi"><span>حساب السناتر</span><b>${n(F.acc)} ج</b><em style="color:var(--muted)">مستحق للسناتر</em></div>
+<div class="kpi"><span>مصاريف برا السنتر</span><b>${n(F.exp)} ج</b><em style="color:var(--bad)">أقلام، حبر، تصوير</em></div>
+<div class="kpi"><span>الصافي</span><b>${n(F.tot-F.acc-F.exp)} ج</b><em>بعد السناتر والمصاريف</em></div></div>
+<div class="tbl"><table><tr><th>السنتر</th><th>حصص النهارده</th><th>حضور</th><th>الإيراد</th><th>رسم السنتر للطالب</th><th>حساب السنتر</th><th>الصافي</th></tr>
+${F.L.map(r=>`<tr><td><b>${r.c}</b></td><td class="num">${r.n}</td><td class="num">${r.att}</td><td class="num">${n(r.rev)} ج</td><td class="num">${centerFee[r.c]} ج</td><td class="num">${n(r.acc)} ج</td><td class="num">${n(r.rev-r.acc)} ج</td></tr>`).join("")}</table></div></div>
+<div class="grid2"><div class="panel"><h2>آخر حصة خلصت</h2>${F.lastS?`<div class="list"><div class="row"><span>${gLabel(F.lastS.g)}</span><span class="muted">${fmt(F.lastS.t)} · سنتر ${F.lastS.c}</span></div>
+<div class="row"><span>حضور</span><b class="num">${F.lastS.att}</b></div><div class="row"><span>إيراد الحصة</span><b class="num">${n(F.lastS.rev)} ج</b></div><div class="row"><span>حساب السنتر للحصة</span><b class="num">${n(F.lastS.acc)} ج</b></div></div>`:'<p class="muted">لسه مفيش حصة خلصت النهارده.</p>'}</div>
+<div class="panel"><h2>مصاريف برا السنتر</h2><div class="list">${expenses.map(e=>`<div class="row"><span>${e.t}<br><small class="muted">${e.by} · ${e.d}</small></span><b class="num">${e.amt} ج</b></div>`).join("")}</div>
+<form class="filters" id="expForm" style="margin-top:10px"><input id="exT" required placeholder="اتصرف على إيه" style="flex:1"><input id="exA" type="number" required placeholder="المبلغ" style="width:90px"><button class="btn pri sm">إضافة</button></form></div></div>`},
+finance(){return `<div class="head"><div><h1>الحسابات</h1><p>الإثنين 2 نوفمبر · نفس الأرقام اللي بتظهر عند المستر</p></div></div>${V.finBlock()}`},
+asst(a=curA){const T=role==="teacher",M=role==="manager",own=ME[role]===a.id,att=a.att[am],pres=att.filter(x=>x.st!=="غياب").length,led=a.ledger.filter(l=>l.mi===am),paid=led.filter(l=>l.type==="pay").reduce((x,l)=>x+l.amt,0),ded=led.filter(l=>l.type==="ded").reduce((x,l)=>x+l.amt,0);
+return `<div class="head"><div>${!own?`<button class="btn sm" data-v="staff" style="margin-bottom:8px">→ رجوع للأسستانت</button>`:""}<h1>${a.n}</h1><p>${a.role} · مسؤول عن ${a.g} · ${a.rate} ج لليوم</p></div>
+<div class="filters"><select id="am" aria-label="الشهر">${MONTHS.map((m,i)=>`<option value="${i}" ${i===am?"selected":""}>${m}</option>`).join("")}</select>${own&&am===0?`<button class="btn pri" id="out">تسجيل انصراف</button>`:""}</div></div>
+<div class="kpis"><div class="kpi"><span>أيام حضور</span><b>${pres}/${att.length}</b></div><div class="kpi"><span>المستحق</span><b>${(pres*a.rate).toLocaleString("en-US")} ج</b></div><div class="kpi"><span>اتدفع</span><b>${paid.toLocaleString("en-US")} ج</b></div><div class="kpi"><span>خصومات</span><b style="color:${ded?"var(--bad)":"inherit"}">${ded} ج</b></div></div>
+<div class="grid2"><div class="panel tbl"><h2>جدول الحضور · ${MONTHS[am]}</h2><table><tr><th>اليوم</th><th>وصول</th><th>انصراف</th><th>الحالة</th></tr>
+${att.slice().reverse().map(x=>`<tr><td>${x.d}</td><td class="num">${x.inT}</td><td class="num">${x.outT}</td><td><span class="pill ${x.st==="حاضر"?"p-good":x.st==="متأخر"?"p-warn":"p-bad"}">${x.st}</span></td></tr>`).join("")}</table></div>
+<div class="panel"><h2>الفلوس والخصومات</h2><div class="list">${led.map(l=>`<div class="row"><span>${l.type==="pay"?'<span class="pill p-good">اتدفع</span>':'<span class="pill p-bad">خصم</span>'} ${l.why}${l.days?`<br><small class="muted">الأيام: ${l.days}</small>`:""}</span><span class="num" style="text-align:end">${l.amt} ج<br><small class="muted">${l.d}</small></span></div>`).join("")||'<p class="muted">مفيش حاجة الشهر ده.</p>'}</div>
+${T||M?`<form class="form" id="ledForm" style="margin-top:12px"><label>النوع<select id="lT"><option value="pay">إداله فلوسه</option>${T?'<option value="ded">خصم</option>':""}</select></label><label>المبلغ<input id="lA" type="number" required></label>
+<label class="full">الأيام (لو خصم)<input id="lD" placeholder="مثال: 3 و 5 نوفمبر"></label><label class="full">السبب (الأسستانت هيشوفه)<input id="lW" required></label><button class="btn pri full">حفظ</button></form>${M?'<p class="muted" style="font-size:.8rem;margin:6px 0 0">الخصم من الأسستانت للمستر بس.</p>':""}`:""}</div></div>`},
+today(){const tg=todayGroups(),pv=PRIV.filter(p=>p.day===TODAY);const card=({g,t})=>{const tt=t+(g.delay||0)/60,c=g.todayCenter||g.center;
+return `<button class="tcard ${selT===g.id?"on":""} ${g.cancel?"off":""}" data-tg="${g.id}"><b class="num">${g.delay?`<s class="muted">${fmt(t)}</s> `:""}${fmt(tt)}</b><span>${gLabel(g)}</span><small>سنتر ${c} · ${gPrice(g)} ج${g.paper?` · ورق ${g.paper.amt} ج`:""}</small>
+<span class="chips">${tt<NOW&&!g.cancel?'<span class="pill p-n">خلصت</span>':""}${g.cancel?'<span class="pill p-bad">ملغية</span>':""}${g.delay?`<span class="pill p-warn">متأخرة ${g.delay} د</span>`:""}${g.todayCenter?'<span class="pill p-warn">المكان اتغير</span>':""}${g.today!=null?'<span class="pill p-n">سعر النهارده</span>':""}${g.paper?`<span class="pill p-n">${g.paper.mode==="notes"?"ورق من المذكرات":"ورق زيادة"}</span>`:""}</span></button>`};
+const g=selT&&GROUPS.find(x=>x.id===selT);
+return `<div class="head"><div><h1>جدول اليوم</h1><p>الإثنين 2 نوفمبر · دوس على أي حصة تعدلها قبل ما تبدأ</p></div></div>
+<div class="tlist">${tg.map(card).join("")}${pv.map(p=>`<div class="tcard priv"><b class="num">${fmt(p.t)}</b><span>برايفت · ${p.grade}</span><small>سنتر ${p.center} · ${p.students.length} طالب · ${aName(p.asst)}${p.then?` · بعدها يكمل ${gLabel(GROUPS.find(x=>x.id===p.then))}`:""}</small></div>`).join("")}</div>
+${g?`<div class="panel" style="margin-top:16px"><h2>تعديل حصة النهارده · ${gLabel(g)}</h2><form class="form" id="todayForm">
+<label>سعر الحصة النهارده<input type="number" id="tP" value="${g.today??""}" placeholder="${gPrice(g)}"></label>
+<label>المكان<select id="tC">${CENTERS.map(c=>`<option ${c===(g.todayCenter||g.center)?"selected":""}>${c}</option>`).join("")}</select></label>
+<label>هتتأخر قد إيه<select id="tD">${[0,15,30,45,60,90].map(m=>`<option value="${m}" ${m===(g.delay||0)?"selected":""}>${m?m+" دقيقة":"في ميعادها"}</option>`).join("")}</select></label>
+<label class="switch" style="flex-direction:row;align-items:center;color:var(--bad)"><input type="checkbox" id="tX" ${g.cancel?"checked":""}> الحصة ملغية</label>
+<label>فلوس ورق النهارده (ج)<input type="number" id="tW" value="${g.paper?.amt??""}" placeholder="مفيش ورق"></label>
+<label>الورق ده<select id="tM"><option value="extra" ${g.paper?.mode==="extra"?"selected":""}>زيادة على كل الطلبة</option><option value="notes" ${g.paper?.mode==="notes"?"selected":""}>تبع فلوس المذكرات (يدفعه اللي مدفعش مذكرة بس)</option></select></label>
+<button class="btn pri full">حفظ وإبلاغ الطلبة</button></form></div>`:""}`},
+notespay(){return `<div class="head"><div><h1>دفع المذكرات</h1><p>في أي وقت حتى لو مفيش حصة · سكان أو كود أو اسم أو موبايل</p></div></div>
+<div class="scan"><div class="panel"><div class="cam">وجّه الكاميرا على QR الطالب</div>
+<div class="sbox" style="display:block;margin-top:12px"><input id="ncode" autocomplete="off" placeholder="اسم الطالب أو الكود أو رقم الموبايل" style="width:100%"><div class="sugg" id="ns" hidden></div></div>
+<p class="muted" style="font-size:.8rem;margin:8px 0 0">جرّب K2401 (دافع ورق قبل كده) أو K2404.</p></div><div class="panel" id="nres"><p class="muted">اختار طالب عشان تظهر مذكرات سنته.</p></div></div>`},
+notesCard(s){const list=notesCatalog.filter(n=>n.g===s.grade);
+return `<div class="stu-card"><div class="stu-top"><div class="avatar">${s.name[0]}</div><div><h2>${s.name}</h2><span class="muted">${s.id} · ${s.grade} · ${s.sec}</span></div></div>
+<div class="list">${list.map((n,i)=>{const has=s.notes.includes(n.t);return `<label class="row"><span><input type="checkbox" id="nb${i}" data-p="${n.p}" data-t="${n.t}" ${has?"checked disabled":""}> ${n.t}</span><span class="num">${has?'<span class="pill p-good">مستلمها</span>':n.p+" ج"}</span></label>`}).join("")}</div>
+${s.paperPaid.length?`<div class="notice" style="background:var(--surface2)"><label class="switch"><input type="checkbox" id="useP"> الطالب دفع فلوس ورق قبل كده · أخصمها من المذكرات؟</label>
+<div id="pBox" hidden style="margin-top:8px"><div class="chips">${s.paperPaid.map((p,i)=>`<label class="chip"><input type="checkbox" id="pp${i}" data-a="${p.amt}"> حصة ${p.d} · ${p.amt} ج</label>`).join("")}<button type="button" class="btn sm" id="pAll">الكل</button></div></div></div>`:""}
+<div class="row" style="display:flex;justify-content:space-between;align-items:center"><span>المطلوب: <b class="num" id="nTot">0 ج</b></span><button class="btn pri" id="nPay">تأكيد الدفع</button></div></div>`},
+private(){const A=isAdmin(),gs=GROUPS.filter(g=>g.grade===pvGrade),myA=ME[role];
+return `<div class="head"><div><h1>حصص برايفت وتعويض</h1><p>لطالب واحد أو أكتر · تتعلّم في جدول الأسبوع وجدول اليوم</p></div></div>
+<div class="panel tbl" style="margin-bottom:16px"><h2>الحصص الجاية</h2><table><tr><th>الميعاد</th><th>السنة</th><th>المكان</th><th>السعر</th><th>عدد الحصص</th><th>تعويض عن</th><th>الأسستانت</th><th>الطلبة</th><th>إضافة طالب</th></tr>
+${PRIV.map(p=>`<tr><td>${DAYS[p.day]} ${fmt(p.t)}${p.then?`<br><small class="muted">بعدها يكمل ${gLabel(GROUPS.find(x=>x.id===p.then))}</small>`:""}</td><td>${p.grade}</td><td>${p.center}</td><td class="num">${p.price} ج</td><td class="num">${p.count}</td><td>${p.makeup.join("، ")}</td><td>${aName(p.asst)}</td>
+<td style="white-space:normal;min-width:180px">${p.students.map(id=>{const s=students.find(x=>x.id===id);return `<div>${s.name} ${p.paid[id]?'<span class="pill p-good">دفع</span>':`<button class="btn sm" data-ppay="${p.id}|${id}">استلام ${p.price} ج</button>`}</div>`}).join("")}</td>
+<td><select id="padd_${p.id}" aria-label="طالب"><option value="">اختار</option>${students.filter(s=>s.grade===p.grade&&!p.students.includes(s.id)).map(s=>`<option value="${s.id}">${s.name}</option>`).join("")}</select> <button class="btn sm" data-padd="${p.id}">إضافة</button></td></tr>`).join("")}</table></div>
+<div class="panel"><h2>حصة برايفت جديدة</h2><form class="form" id="privForm">
+<label>السنة<select id="pvG">${TG.map(g=>`<option ${g===pvGrade?"selected":""}>${g}</option>`).join("")}</select></label>
+<label>السنتر<select id="pvC">${CENTERS.map(c=>`<option>${c}</option>`).join("")}</select></label>
+<label>اليوم<select id="pvD">${DAYS.map((d,i)=>`<option value="${i}" ${i===TODAY?"selected":""}>${d}</option>`).join("")}</select></label>
+<label>الساعة<input type="time" id="pvT" value="17:00"></label>
+<label>سعر الحصة للطالب<input type="number" id="pvP" value="100"></label>
+<label>عدد الحصص<input type="number" id="pvN" value="1" min="1"></label>
+<div class="full"><span class="muted" style="font-size:.85rem">الطلبة</span><div class="chips" style="margin-top:6px">${students.filter(s=>s.grade===pvGrade).map(s=>`<label class="chip"><input type="checkbox" class="pvS" value="${s.id}">${s.name} <small class="muted">${grpOf(s).name}</small></label>`).join("")}</div></div>
+<div class="full"><span class="muted" style="font-size:.85rem">تعويض عن أنهي حصة في الأسبوع (ممكن أكتر من واحدة)</span><div class="chips" style="margin-top:6px">${gs.flatMap(g=>g.slots.map(x=>`<label class="chip"><input type="checkbox" class="pvM" value="${DAYS[x.d]} ${fmt(x.t)}">${DAYS[x.d]} ${fmt(x.t)} · ${g.sec} ${g.name}</label>`)).join("")}</div></div>
+<label>مين هيديها<select id="pvA" ${A?"":"disabled"}>${A?assistants.map(a=>`<option value="${a.id}" ${a.id===myA?"selected":""}>${a.n}${a.id===myA?" (أنا)":""}</option>`).join(""):`<option value="${myA}">${aName(myA)} (أنا)</option>`}</select></label>
+<label>بعد ما يخلص يكمل في حصة شغالة؟<select id="pvThen"><option value="">لأ</option>${GROUPS.map(g=>`<option value="${g.id}">${gLabel(g)} · ${g.center}</option>`).join("")}</select></label>
+<button class="btn pri full">حفظ الحصة</button></form></div>`},
+staff(){return `<div class="head"><div><h1>الأسستانت</h1><p>مواعيد النهارده · دوس على أي أسستانت تفتح صفحته</p></div>${searchBox("بحث باسم الأسستانت")}</div>
+<div class="panel tbl"><table><tr><th>الاسم</th><th>الدور</th><th>مسؤول عن</th><th>وصل</th><th>مشي</th><th>سجّل طلبة</th><th>الحالة</th></tr>
+${assistants.map((a,i)=>`<tr class="click" data-asst="${a.id}"><td><b>${a.n}</b></td><td>${a.role}</td><td>${a.g}</td><td class="num">${a.in}</td><td class="num">${a.out}</td><td class="num">${[38,14,22][i]}</td><td>${a.out==="—"?'<span class="pill p-good">موجود</span>':'<span class="pill p-n">مشي</span>'}</td></tr>`).join("")}</table></div>`},
+perms(){const P=["يشوف الإحصائيات","يشوف الحسابات وإيراد اليوم","يسجل حضور طلبة","يأكد استلام الفلوس","يضيف طالب","يطرد طالب","يضيف مذكرة","يعدل الدرجات","يأكد رقم ولي الأمر","يعفي من فرق السعر","يعدل حصص النهارده","يعمل حصة برايفت","يحدد مين يدي البرايفت","يدفع مرتب أسستانت","يخصم من أسستانت"],R=[[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],[0,0,1,1,1,0,0,0,1,0,1,1,0,0,0]];
+return `<div class="head"><div><h1>الصلاحيات</h1><p>مين يقدر يعمل إيه · التعديلات بتسري فورًا</p></div>${searchBox("بحث في الصلاحيات")}</div>
+<div class="panel tbl"><table class="perm"><tr><th>الصلاحية</th><th>المدرس</th><th>أسستانت مدير</th><th>أسستانت</th></tr>
+${P.map((p,i)=>`<tr><td>${p}</td>${R.map((r,j)=>`<td><input type="checkbox" id="pm${i}${j}" aria-label="${p}" ${r[i]?"checked":""} ${j===0?"disabled":""}></td>`).join("")}</tr>`).join("")}</table></div>`},
+scan(){const tg=todayGroups();if(!curG||!tg.some(x=>x.g.id===curG))curG=tg[0].g.id;const g=GROUPS.find(x=>x.id===curG),mine=students.filter(x=>x.group===curG),other=students.find(x=>x.group!==curG);
+return `<div class="head"><div><h1>تسجيل الحضور</h1><p>سنتر ${g.center} · ${g.grade} ${g.sec} · ${g.name} · الحصة بـ ${gPrice(g)} ج</p></div>
+<div class="filters"><select id="curG" aria-label="الحصة الحالية">${tg.map(({g:x,t})=>`<option value="${x.id}" ${x.id===curG?"selected":""}>${fmt(t)} · ${x.center} · ${x.grade} ${x.sec} · ${x.name}</option>`).join("")}</select><span class="pill p-good">حضر: <b class="num" id="cnt">0</b> من ${g.n}</span></div></div>
+<div class="scan"><div class="panel"><div class="cam">وجّه الكاميرا على QR الطالب</div>
+<form id="codeForm" style="display:flex;gap:8px;margin-top:12px"><span class="sbox" style="flex:1"><input id="code" autocomplete="off" placeholder="اكتب اسم الطالب أو الكود" style="width:100%"><div class="sugg" id="cs" hidden></div></span><button class="btn pri">بحث</button></form>
+<p class="muted" style="font-size:.8rem;margin:8px 0 0">البحث بيطلع طلبة المجموعة دي بس. للتجربة: ${mine.map(x=>x.id).join(" أو ")}، وجرّب ${other.id} (من مجموعة تانية)${mine.find(x=>x.parentBad)?` · ${mine.find(x=>x.parentBad).id} رقم ولي أمره غلط`:""}.</p></div>
+<div class="panel" id="result"><p class="muted">اعمل سكان أو اكتب الاسم أو الكود عشان تظهر بيانات الطالب هنا.</p></div></div>`},
+new(){return `<div class="head"><div><h1>تسجيل طالب جديد</h1><p>أول مرة على الموقع · هيتعمله QR تلقائي</p></div></div>
+<div class="panel"><form class="form" id="newForm"><label>اسم الطالب<input id="sn" required placeholder="الاسم ثلاثي"></label><label>رقم ولي الأمر<input id="sp" placeholder="01xxxxxxxxx"></label>
+<label>السنة<select id="sg">${GRADES.map(g=>`<option>${g}</option>`).join("")}</select></label><label>القسم<select id="ss"><option>عربي</option><option>لغات</option></select></label>
+<label>نظام الدفع<select id="spl"><option>شهر (4 حصص)</option><option>بالحصة</option></select></label><label>دفع دلوقتي؟<select id="spn"><option>أيوه</option><option>لأ</option></select></label>
+<div class="full"><span class="muted" style="font-size:.85rem">استلم مذكرات؟ (اختار اللي دفعها)</span><div class="chips" style="margin-top:6px">${notesCatalog.map((n,i)=>`<label class="chip"><input type="checkbox" id="nc${i}">${n.t} · ${n.p} ج</label>`).join("")}</div></div>
+<button class="btn pri full">تسجيل الطالب وطباعة الكود</button></form></div>`},
+shift(){return V.asst(assistants.find(a=>a.id===ME[role]))},
+me(){return V.stu(students[4])},
+stu(s=cur){const T=isAdmin();return `<div class="head"><div>${T?`<button class="btn sm" data-v="students" style="margin-bottom:8px">→ رجوع للطلبة</button>`:""}<h1>${T?s.name:"أهلاً "+s.name.split(" ")[0]}</h1><p>${s.grade} · ${s.sec} · كود ${s.id}</p></div></div>
+${T?V.adminBox(s):""}
+${s.paidNext?`<div class="notice" style="background:var(--warn-bg);color:var(--warn);margin-bottom:16px">تنبيه: شهر نوفمبر مستحق الحصة الجاية (الخميس 5 نوفمبر). اتسجل إنك هتدفع.</div>`:""}
+<div class="panel" style="margin-bottom:16px"><div class="profile"><canvas class="qr" id="qr" width="150" height="150" aria-label="QR الطالب"></canvas>
+<div class="kpis" style="margin:0"><div class="kpi"><span>الحضور</span><b>${s.att}/${s.total}</b></div><div class="kpi"><span>متوسط الواجب</span><b>${s.hw}%</b></div><div class="kpi"><span>متوسط الامتحانات</span><b>${avg(s.exam)}/20</b></div><div class="kpi"><span>الشهر</span><b style="font-size:1rem;margin-top:8px">${payPill(s)}</b></div></div></div></div>
+<div class="grid2"><div class="panel"><h2>الدرجات</h2><div class="list">${[["امتحان الجبر - الأسبوع 1",s.exam[0]],["امتحان الهندسة",s.exam[1]],["امتحان شامل أكتوبر",s.exam[2]]].map(([t,v])=>`<div class="row"><span style="min-width:0">${t}</span><div class="gr" style="width:45%"><div class="track"><i style="width:${v*5}%"></i></div><b class="num">${v}/20</b></div></div>`).join("")}</div></div>
+<div class="panel"><h2>الإشعارات</h2><div class="list"><div class="row"><span>اتسجلك حضور حصة 2 نوفمبر</span><span class="muted">النهارده</span></div><div class="row"><span>درجة امتحان أكتوبر نزلت</span><span class="muted">أمس</span></div><div class="row"><span>مذكرة الهندسة متاحة في السنتر</span><span class="muted">28 أكتوبر</span></div></div></div></div>`}
+};
+
+function drawQR(){const c=$("#qr");if(!c)return;const x=c.getContext("2d"),n=25,z=150/n;x.fillStyle="#fff";x.fillRect(0,0,150,150);x.fillStyle="#111";let seed=7;
+for(let i=0;i<n;i++)for(let j=0;j<n;j++){seed=(seed*9301+49297)%233280;if(seed/233280>.55)x.fillRect(i*z,j*z,z,z)}
+[[0,0],[n-7,0],[0,n-7]].forEach(([a,b])=>{x.fillStyle="#fff";x.fillRect(a*z,b*z,7*z,7*z);x.fillStyle="#111";x.fillRect(a*z,b*z,7*z,7*z);x.fillStyle="#fff";x.fillRect((a+1)*z,(b+1)*z,5*z,5*z);x.fillStyle="#111";x.fillRect((a+2)*z,(b+2)*z,3*z,3*z)})}
+
+function showStudent(code){const s=students.find(x=>x.id.toLowerCase()===code.trim().toLowerCase());const r=$("#result");
+if(!s){r.innerHTML=`<p class="muted">الكود ${code} مش موجود. اتأكد منه أو سجّل الطالب كطالب جديد.</p>`;return}
+if(s.expelled){r.innerHTML=`<div class="notice" style="background:var(--bad-bg);color:var(--bad)"><b>${s.name} مطرود من المستر.</b> مينفعش يحضر. لو فيه مشكلة كلّم المستر.</div>`;return}
+if(s.group!==curG){const og=grpOf(s);r.innerHTML=`<div class="notice" style="background:var(--bad-bg);color:var(--bad)"><b>${s.name} (${s.id}) مش من المجموعة دي.</b><br>مسجل في: سنتر ${og.center} · ${og.grade} ${og.sec} · ${og.name} (${og.slots.map(x=>DAYS[x.d]+" "+fmt(x.t)).join(" و ")}).<br>مينفعش يتسجله حضور هنا. لو محتاج حصة تعويضية كلّم المستر.</div>`;return}
+const due=s.plan==="شهر"&&s.left===0;
+r.innerHTML=`<div class="stu-card"><div class="stu-top"><div class="avatar">${s.name[0]}</div><div><h2>${s.name}</h2><span class="muted">${s.id} · ${s.grade} · ${s.sec}</span></div></div>
+${PRIV.filter(p=>p.students.includes(s.id)&&!p.paid[s.id]).map(p=>`<div class="notice" style="background:var(--warn-bg);color:var(--warn)">عليه حصة تعويضية مدفوعتش: ${DAYS[p.day]} ${fmt(p.t)} · ${p.price} ج <button class="btn sm" data-ppay="${p.id}|${s.id}">استلام ${p.price} ج</button></div>`).join("")}
+${(()=>{const g=GROUPS.find(x=>x.id===curG);if(!g.paper)return"";const need=g.paper.mode==="extra"||!s.notes.length;if(!need)return`<div class="notice" style="background:var(--surface2)">ورق النهارده تبع المذكرات · الطالب دافع مذكرة فمش هيدفع</div>`;return s._paper?`<div class="notice" style="background:var(--good-bg);color:var(--good)">دفع ورق النهارده ${g.paper.amt} ج</div>`:`<div class="notice" style="background:var(--warn-bg);color:var(--warn)">ورق النهارده ${g.paper.amt} ج <button class="btn sm" data-act="paper">استلام الورق</button></div>`})()}
+${s.parentBad?`<div class="notice" style="background:var(--bad-bg);color:var(--bad)"><b>رقم ولي الأمر غلط أو مش بيرد.</b> اسأل الطالب عن الرقم الصح وعدّله، أو اختار حل تاني.
+<div class="actions" style="margin-top:8px"><input id="newParent" placeholder="الرقم الصح 01xxxxxxxxx" class="num" style="flex:1;min-width:160px"><button class="btn pri sm" data-act="fixp">حفظ الرقم</button><button class="btn sm" data-act="later2">يجيبه الحصة الجاية</button><button class="btn sm" data-act="flag">بلّغ المستر</button></div></div>`:""}
+<div class="row" style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;background:var(--surface2);border-radius:6px;padding:8px 10px"><span>ولي الأمر: <b class="num">${s.parent}</b> ${vpill(s)}</span>${s.verified?"":`<button class="btn sm" data-act="verify">تم التأكد من الرقم</button>`}</div>
+<div class="kv"><div><span>نظام الدفع</span>${s.plan==="شهر"?"شهري":"بالحصة"}</div><div><span>الحالة</span>${payPill(s)}</div><div><span>الحضور</span><b class="num">${s.att}/${s.total}</b></div></div>
+${due?`<div class="notice" style="background:var(--bad-bg);color:var(--bad)">الشهر خلص (4 حصص). محتاج يدفع شهر جديد أو يدفع الحصة.</div>`:s.plan==="حصة"?`<div class="notice" style="background:var(--warn-bg);color:var(--warn)">بيدفع بالحصة · سعر الحصة ${sessPrice(s)} ج${s.custom?" (سعر خاص)":""}</div>`:""}
+${s.diffDue?`<div class="notice" style="background:var(--warn-bg);color:var(--warn)">السعر اتغير: عليه فرق ${s.diffDue} ج عن الشهر اللي دافعه.</div>`:""}
+<div class="actions"><button class="btn pri" data-act="att">تسجيل حضور</button>
+${s.plan==="حصة"||due?`<button class="btn" data-act="sess">تأكيد استلام الحصة</button><button class="btn" data-act="month">تأكيد استلام الشهر</button><button class="btn" data-act="later">هيدفع الحصة الجاية</button>`:""}
+${s.diffDue?`<button class="btn" data-act="diff">استلام الفرق ${s.diffDue} ج</button>${pricing.allowWaive?`<button class="btn" data-act="waive">إعفاء من الفرق</button>`:""}`:""}<button class="btn" data-act="skip">إلغاء</button></div></div>`;
+r.dataset.id=s.id}
+
+function nCalc(){let t=0;document.querySelectorAll("[id^=nb]:checked:not(:disabled)").forEach(x=>t+=+x.dataset.p);if($("#useP")?.checked)document.querySelectorAll("[id^=pp]:checked").forEach(x=>t-=+x.dataset.a);t=Math.max(0,t);const el=$("#nTot");if(el)el.textContent=t+" ج";return t}
+function render(){if(view!=="stu")expelArm=false;$("#nav").innerHTML=NAV[role].map(([k,l])=>`<button data-v="${k}" class="${k===view?"on":""}">${l}</button>`).join("");$("#main").innerHTML=V[view]();drawQR();applySearch()}
+function openStu(id){cur=students.find(x=>x.id===id);view="stu";q="";render();scrollTo(0,0)}
+document.addEventListener("click",e=>{const t=e.target.closest("button")||e.target.closest("tr[data-open],tr[data-asst]");if(!t)return;
+if(t.dataset.role){role=t.dataset.role;view=NAV[role][0][0];document.querySelectorAll(".roles button").forEach(b=>b.classList.toggle("on",b===t));render()}
+else if(t.dataset.asst){curA=assistants.find(a=>a.id===t.dataset.asst);am=0;view="asst";render();scrollTo(0,0)}
+else if(t.dataset.tg){selT=selT===t.dataset.tg?null:t.dataset.tg;render()}
+else if(t.dataset.npick){$("#ns").hidden=true;$("#ncode").value="";cur=students.find(x=>x.id===t.dataset.npick);$("#nres").innerHTML=V.notesCard(cur);nCalc()}
+else if(t.dataset.ppay){const [pid,sid]=t.dataset.ppay.split("|"),p=PRIV.find(x=>x.id===pid);p.paid[sid]=true;toast(`اتستلم ${p.price} ج للحصة التعويضية`);if(view==="scan")showStudent(sid);else render()}
+else if(t.dataset.padd){const p=PRIV.find(x=>x.id===t.dataset.padd),v=$("#padd_"+p.id).value;if(!v){toast("اختار الطالب الأول");return}p.students.push(v);render();toast("الطالب اتضاف للحصة")}
+else if(t.id==="expel"){if(!expelArm){expelArm=true;render();return}cur.expelled=true;expelArm=false;render();toast(`${cur.name} اتطرد ومش هيقدر يتسجله حضور`)}
+else if(t.id==="pAll"){document.querySelectorAll("[id^=pp]").forEach(x=>x.checked=true);nCalc()}
+else if(t.id==="nPay"){const sel=[...document.querySelectorAll("[id^=nb]:checked:not(:disabled)")];if(!sel.length){toast("اختار مذكرة واحدة على الأقل");return}const tot=nCalc();sel.forEach(x=>cur.notes.push(x.dataset.t));if($("#useP")?.checked){const used=[...document.querySelectorAll("[id^=pp]:checked")].map(x=>+x.id.slice(2));cur.paperPaid=cur.paperPaid.filter((_,i)=>!used.includes(i))}notesIncome+=tot;$("#nres").innerHTML=V.notesCard(cur);nCalc();toast(`اتستلم ${tot} ج مذكرات`)}
+else if(t.dataset.pick){$("#cs").hidden=true;$("#code").value="";showStudent(t.dataset.pick)}
+else if(t.dataset.g){selG=selG===t.dataset.g?null:t.dataset.g;render();if(selG)document.querySelector(".tbl h2")?.scrollIntoView({behavior:"smooth",block:"center"})}
+else if(t.dataset.v){view=t.dataset.v;render()}
+else if(t.dataset.open){openStu(t.dataset.open)}
+else if(t.dataset.act){const s=students.find(x=>x.id===$("#result").dataset.id),a=t.dataset.act;
+if(a==="att"){if(s._in){toast("الطالب ده اتسجل حضوره قبل كده");return}s._in=1;s.att++;$("#cnt").textContent=+$("#cnt").textContent+1;if(s.plan==="شهر"&&s.left>0)s.left--;saved(`اتسجل حضور ${s.name}`)}
+if(a==="sess")toast(`اتأكد استلام ${sessPrice(s)} ج للحصة`);
+if(a==="month"){s.plan="شهر";s.left=4;toast("اتأكد استلام الشهر · 4 حصص")}
+if(a==="later"){s.paidNext=true;toast("اتبعت تنبيه للطالب في صفحته")}
+if(a==="fixp"){const v=$("#newParent").value.trim();if(!/^01\d{9}$/.test(v)){toast("الرقم لازم يبقى 11 رقم ويبدأ بـ 01");return}s.parent=v;s.parentBad=false;s.verified=false;toast("الرقم اتعدل · محتاج يتأكد منه")}
+if(a==="later2"){toast("اتسجل تذكير للطالب يجيب الرقم الصح")}
+if(a==="flag"){toast("اتبعت تنبيه للمستر عن رقم ولي الأمر")}
+if(a==="paper"){const g=GROUPS.find(x=>x.id===curG);s._paper=1;s.paperPaid.push({d:"2 نوفمبر",amt:g.paper.amt});toast(`اتستلم ${g.paper.amt} ج ورق`)}
+if(a==="verify"){s.verified=true;toast("رقم ولي الأمر اتأكد")}
+if(a==="diff"){toast(`اتستلم فرق ${s.diffDue} ج`);s.diffDue=0}
+if(a==="waive"){s.diffDue=0;toast("الطالب اتعفى من الفرق (بإذن المستر)")}
+if(a==="skip"){$("#result").innerHTML='<p class="muted">جاهز للطالب اللي بعده.</p>';return}
+showStudent(s.id)}
+else if(t.id==="net"){online=!online;if(online&&pending){toast(`النت رجع · اترفع ${pending} عملية`);pending=0}else if(!online)toast("وضع بدون نت: السكان والتسجيل شغالين عادي");upd()}
+else if(t.id==="theme"){const d=document.documentElement,dark=d.dataset.theme?d.dataset.theme==="dark":matchMedia("(prefers-color-scheme:dark)").matches;d.dataset.theme=dark?"light":"dark";t.textContent=dark?"الوضع الداكن":"الوضع الفاتح"}
+else if(t.id==="out"){t.disabled=true;t.textContent="اتسجل الانصراف 6:12 م";toast("اتسجل انصرافك")}});
+document.addEventListener("input",e=>{const id=e.target.id,v=e.target.value.trim();
+if(id==="q"){q=e.target.value;applySearch();const box=$("#qs");if(!isAdmin()||!v){box.hidden=true;return}box.innerHTML=suggHTML(students.filter(s=>s.name.includes(v)||s.id.toLowerCase().includes(v.toLowerCase())||s.parent.includes(v)),"data-open");box.hidden=false}
+if(id==="code"){const box=$("#cs");if(!v){box.hidden=true;return}box.innerHTML=suggHTML(students.filter(s=>s.group===curG&&(s.name.includes(v)||s.id.toLowerCase().includes(v.toLowerCase()))),"data-pick");box.hidden=false}
+if(id==="ncode"){const box=$("#ns");if(!v){box.hidden=true;return}box.innerHTML=suggHTML(students.filter(s=>s.name.includes(v)||s.id.toLowerCase().includes(v.toLowerCase())||s.phone.includes(v)||s.parent.includes(v)),"data-npick");box.hidden=false}
+if(id.startsWith("px")){PM[e.target.dataset.c][e.target.dataset.gr]=+e.target.value}});
+document.addEventListener("click",e=>{if(!e.target.closest(".sbox"))document.querySelectorAll(".sugg").forEach(x=>x.hidden=true)});
+document.addEventListener("change",e=>{if(e.target.id==="am"){am=+e.target.value;render()}if(e.target.id==="pvG"){pvGrade=e.target.value;render()}if(e.target.id==="useP"){$("#pBox").hidden=!e.target.checked;nCalc()}if(/^(nb|pp)/.test(e.target.id||""))nCalc();if(e.target.id==="curG"){curG=e.target.value;render()}if(e.target.id?.startsWith("px"))toast("اتحفظ السعر");if(e.target.id==="fg"){filt.g=e.target.value;render()}if(e.target.id==="fs"){filt.s=e.target.value;render()}if(e.target.id?.startsWith("pm"))toast("اتحفظت الصلاحية")});
+document.addEventListener("submit",e=>{e.preventDefault();const f=e.target.id;
+if(f==="customForm"){cur.custom=$("#cOn").checked?+$("#cVal").value:null;render();toast(cur.custom?`سعر الحصة لـ ${cur.name} بقى ${cur.custom} ج`:"رجع لسعر السنتر")}
+if(f==="priceForm"){const ns=+$("#pS").value,nm=+$("#pM").value,d=nm-pricing.month;pricing.allowWaive=$("#pA").checked;if(ns!==pricing.session||nm!==pricing.month){pricing.history.unshift({d:"2 نوفمبر",s:ns,m:nm,why:$("#pW").value||"تعديل سعر"});if(d>0)students.forEach(x=>{if(x.plan==="شهر"&&x.left>0&&!x.custom)x.diffDue=Math.round(d*x.left/4)});pricing.session=ns;pricing.month=nm;toast(d>0?"السعر اتغير · اتحسب الفرق للي دافعين شهر":"السعر اتغير")}else toast("اتحفظ");render()}
+if(f==="moveForm"){const g=GROUPS.find(x=>x.id===selG),sl=g.slots[+$("#mvSlot").value],[h,m]=$("#mvTime").value.split(":").map(Number);sl.d=+$("#mvDay").value;sl.t=h+m/60;sl.moved=true;g.center=$("#mvCenter").value;render();toast(`الميعاد اتغير لـ ${DAYS[sl.d]} ${fmt(sl.t)} · اتبعت إشعار للطلبة`)}
+if(f==="gpForm"){const g=GROUPS.find(x=>x.id===selG),a=$("#gpFix").value,b=$("#gpToday").value;g.price=a?+a:null;g.today=b?+b:null;render();toast(g.today!=null?`سعر النهارده بس ${g.today} ج`:"اتحفظ السعر")}
+if(f==="expForm"){expenses.unshift({t:$("#exT").value,amt:+$("#exA").value,by:role==="teacher"?"المستر":aName(ME[role]),d:"النهارده"});render();toast("المصروف اتسجل")}
+if(f==="ledForm"){const a=curA||assistants.find(x=>x.id===ME[role]),tp=$("#lT").value;a.ledger.push({mi:am,type:tp,amt:+$("#lA").value,d:"2 نوفمبر",days:$("#lD").value,why:$("#lW").value});render();toast(tp==="pay"?"اتسجل إنه استلم فلوسه":"الخصم اتسجل والأسستانت هيشوف السبب")}
+if(f==="todayForm"){const g=GROUPS.find(x=>x.id===selT),p=$("#tP").value,w=$("#tW").value;g.today=p?+p:null;g.todayCenter=$("#tC").value!==g.center?$("#tC").value:null;g.delay=+$("#tD").value;g.cancel=$("#tX").checked;g.paper=w?{amt:+w,mode:$("#tM").value}:null;render();toast(g.cancel?"الحصة اتلغت واتبعت إشعار للطلبة":"اتحفظ واتبعت إشعار للطلبة")}
+if(f==="privForm"){const st=[...document.querySelectorAll(".pvS:checked")].map(x=>x.value);if(!st.length){toast("اختار طالب واحد على الأقل");return}const [h,m]=$("#pvT").value.split(":").map(Number);PRIV.push({id:"p"+(PRIV.length+1),grade:pvGrade,center:$("#pvC").value,day:+$("#pvD").value,t:h+m/60,price:+$("#pvP").value,count:+$("#pvN").value,students:st,paid:{},makeup:[...document.querySelectorAll(".pvM:checked")].map(x=>x.value),asst:$("#pvA").value,then:$("#pvThen").value||null});render();toast("الحصة اتحفظت وظهرت في الجدول")}
+if(f==="codeForm"){const v=$("#code").value.trim(),m=students.find(x=>x.id.toLowerCase()===v.toLowerCase())||students.find(x=>x.group===curG&&x.name.includes(v));$("#cs").hidden=true;showStudent(m?m.id:v)}
+if(f==="noteForm"){notesCatalog.push({t:$("#nt").value,g:$("#ng").value,p:+$("#np").value});render();toast("اتضافت المذكرة")}
+if(f==="newForm"){const id="K"+(2401+students.length);students.push({id,name:$("#sn").value,grade:$("#sg").value,sec:$("#ss").value,plan:$("#spl").value.startsWith("شهر")?"شهر":"حصة",left:4,att:0,total:0,hw:0,exam:[0],notes:[]});toast(`اتسجل الطالب بكود ${id}`);e.target.reset()}});
+if(matchMedia("(prefers-color-scheme:dark)").matches)$("#theme").textContent="الوضع الفاتح";
+const ACC={omar:"teacher",manager:"manager",assistant:"assistant",student:"student"};
+function enter(r){role=r;view=NAV[r][0][0];document.querySelectorAll(".roles button").forEach(b=>b.classList.toggle("on",b.dataset.role===r));$("#login").hidden=true;$("#app").hidden=false;render()}
+document.getElementById("loginForm").addEventListener("submit",e=>{e.preventDefault();e.stopPropagation();const u=$("#lu").value.trim().toLowerCase(),r=ACC[u];if(!r||$("#lp").value!=="1234"){$("#lerr").hidden=false;return}try{sessionStorage.setItem("kr",r)}catch(_){}enter(r)});
+document.getElementById("logout").addEventListener("click",e=>{e.stopPropagation();try{sessionStorage.removeItem("kr")}catch(_){}$("#app").hidden=true;$("#login").hidden=false;$("#lp").value=""});
+document.documentElement.dir="rtl";document.documentElement.lang="ar";try{const r=sessionStorage.getItem("kr");if(r&&NAV[r])enter(r)}catch(_){}
+</script>
+
+</body>
+</html>
