@@ -79,6 +79,9 @@ tr:last-child td{border-bottom:0}
 .list .row:last-child{border:0}
 .muted{color:var(--muted)}.num{font-variant-numeric:tabular-nums}
 .scan{display:grid;grid-template-columns:1fr 1.2fr;gap:16px}
+.cam video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.camui{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;padding:0 20%}
+.cam::before,.cam::after{z-index:1}
 .cam{aspect-ratio:1;max-width:100%;background:#111;border-radius:8px;position:relative;overflow:hidden;display:grid;place-items:center;color:#9aa}
 .cam::before{content:"";position:absolute;inset:18%;border:2px solid var(--chalk);border-radius:10px}
 .cam::after{content:"";position:absolute;left:18%;right:18%;height:2px;background:var(--chalk);top:30%;animation:sweep 2.2s ease-in-out infinite alternate}
@@ -165,6 +168,8 @@ omar · manager · assistant · student<br>كلمة السر لكلهم: 1234</d
 </div>
 <div class="toast" id="toast" hidden></div>
 
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <script>
 const GRADES=["أولى إعدادي","تانية إعدادي","تالتة إعدادي","أولى ثانوي عام","تانية ثانوي عام","تالتة ثانوي عام","أولى ثانوي بكالوريا","تانية ثانوي بكالوريا","تالتة ثانوي بكالوريا"];
 const SECS=["عربي","لغات"];
@@ -337,7 +342,7 @@ ${g?`<div class="panel" style="margin-top:16px"><h2>تعديل حصة النها
 <label>الورق ده<select id="tM"><option value="extra" ${g.paper?.mode==="extra"?"selected":""}>زيادة على كل الطلبة</option><option value="notes" ${g.paper?.mode==="notes"?"selected":""}>تبع فلوس المذكرات (يدفعه اللي مدفعش مذكرة بس)</option></select></label>
 <button class="btn pri full">حفظ وإبلاغ الطلبة</button></form></div>`:""}`},
 notespay(){return `<div class="head"><div><h1>دفع المذكرات</h1><p>في أي وقت حتى لو مفيش حصة · سكان أو كود أو اسم أو موبايل</p></div></div>
-<div class="scan"><div class="panel"><div class="cam">وجّه الكاميرا على QR الطالب</div>
+<div class="scan"><div class="panel"><div class="cam" data-cam="1"><div class="camui"><span id="camMsg">وجّه الكاميرا على QR الطالب</span><button type="button" class="btn pri sm" id="camBtn">تشغيل الكاميرا</button></div></div>
 <div class="sbox" style="display:block;margin-top:12px"><input id="ncode" autocomplete="off" placeholder="اسم الطالب أو الكود أو رقم الموبايل" style="width:100%"><div class="sugg" id="ns" hidden></div></div>
 <p class="muted" style="font-size:.8rem;margin:8px 0 0">جرّب K2401 (دافع ورق قبل كده) أو K2404.</p></div><div class="panel" id="nres"><p class="muted">اختار طالب عشان تظهر مذكرات سنته.</p></div></div>`},
 notesCard(s){const list=notesCatalog.filter(n=>n.g===s.grade);
@@ -374,7 +379,7 @@ ${P.map((p,i)=>`<tr><td>${p}</td>${R.map((r,j)=>`<td><input type="checkbox" id="
 scan(){const tg=todayGroups();if(!curG||!tg.some(x=>x.g.id===curG))curG=tg[0].g.id;const g=GROUPS.find(x=>x.id===curG),mine=students.filter(x=>x.group===curG),other=students.find(x=>x.group!==curG);
 return `<div class="head"><div><h1>تسجيل الحضور</h1><p>سنتر ${g.center} · ${g.grade} ${g.sec} · ${g.name} · الحصة بـ ${gPrice(g)} ج</p></div>
 <div class="filters"><select id="curG" aria-label="الحصة الحالية">${tg.map(({g:x,t})=>`<option value="${x.id}" ${x.id===curG?"selected":""}>${fmt(t)} · ${x.center} · ${x.grade} ${x.sec} · ${x.name}</option>`).join("")}</select><span class="pill p-good">حضر: <b class="num" id="cnt">0</b> من ${g.n}</span></div></div>
-<div class="scan"><div class="panel"><div class="cam">وجّه الكاميرا على QR الطالب</div>
+<div class="scan"><div class="panel"><div class="cam" data-cam="1"><div class="camui"><span id="camMsg">وجّه الكاميرا على QR الطالب</span><button type="button" class="btn pri sm" id="camBtn">تشغيل الكاميرا</button></div></div>
 <form id="codeForm" style="display:flex;gap:8px;margin-top:12px"><span class="sbox" style="flex:1"><input id="code" autocomplete="off" placeholder="اكتب اسم الطالب أو الكود" style="width:100%"><div class="sugg" id="cs" hidden></div></span><button class="btn pri">بحث</button></form>
 <p class="muted" style="font-size:.8rem;margin:8px 0 0">البحث بيطلع طلبة المجموعة دي بس. للتجربة: ${mine.map(x=>x.id).join(" أو ")}، وجرّب ${other.id} (من مجموعة تانية)${mine.find(x=>x.parentBad)?` · ${mine.find(x=>x.parentBad).id} رقم ولي أمره غلط`:""}.</p></div>
 <div class="panel" id="result"><p class="muted">اعمل سكان أو اكتب الاسم أو الكود عشان تظهر بيانات الطالب هنا.</p></div></div>`},
@@ -389,15 +394,27 @@ me(){return V.stu(students[4])},
 stu(s=cur){const T=isAdmin();return `<div class="head"><div>${T?`<button class="btn sm" data-v="students" style="margin-bottom:8px">→ رجوع للطلبة</button>`:""}<h1>${T?s.name:"أهلاً "+s.name.split(" ")[0]}</h1><p>${s.grade} · ${s.sec} · كود ${s.id}</p></div></div>
 ${T?V.adminBox(s):""}
 ${s.paidNext?`<div class="notice" style="background:var(--warn-bg);color:var(--warn);margin-bottom:16px">تنبيه: شهر نوفمبر مستحق الحصة الجاية (الخميس 5 نوفمبر). اتسجل إنك هتدفع.</div>`:""}
-<div class="panel" style="margin-bottom:16px"><div class="profile"><canvas class="qr" id="qr" width="150" height="150" aria-label="QR الطالب"></canvas>
+<div class="panel" style="margin-bottom:16px"><div class="profile"><canvas class="qr" id="qr" data-id="${s.id}" width="150" height="150" aria-label="QR الطالب"></canvas>
 <div class="kpis" style="margin:0"><div class="kpi"><span>الحضور</span><b>${s.att}/${s.total}</b></div><div class="kpi"><span>متوسط الواجب</span><b>${s.hw}%</b></div><div class="kpi"><span>متوسط الامتحانات</span><b>${avg(s.exam)}/20</b></div><div class="kpi"><span>الشهر</span><b style="font-size:1rem;margin-top:8px">${payPill(s)}</b></div></div></div></div>
 <div class="grid2"><div class="panel"><h2>الدرجات</h2><div class="list">${[["امتحان الجبر - الأسبوع 1",s.exam[0]],["امتحان الهندسة",s.exam[1]],["امتحان شامل أكتوبر",s.exam[2]]].map(([t,v])=>`<div class="row"><span style="min-width:0">${t}</span><div class="gr" style="width:45%"><div class="track"><i style="width:${v*5}%"></i></div><b class="num">${v}/20</b></div></div>`).join("")}</div></div>
 <div class="panel"><h2>الإشعارات</h2><div class="list"><div class="row"><span>اتسجلك حضور حصة 2 نوفمبر</span><span class="muted">النهارده</span></div><div class="row"><span>درجة امتحان أكتوبر نزلت</span><span class="muted">أمس</span></div><div class="row"><span>مذكرة الهندسة متاحة في السنتر</span><span class="muted">28 أكتوبر</span></div></div></div></div>`}
 };
 
-function drawQR(){const c=$("#qr");if(!c)return;const x=c.getContext("2d"),n=25,z=150/n;x.fillStyle="#fff";x.fillRect(0,0,150,150);x.fillStyle="#111";let seed=7;
-for(let i=0;i<n;i++)for(let j=0;j<n;j++){seed=(seed*9301+49297)%233280;if(seed/233280>.55)x.fillRect(i*z,j*z,z,z)}
-[[0,0],[n-7,0],[0,n-7]].forEach(([a,b])=>{x.fillStyle="#fff";x.fillRect(a*z,b*z,7*z,7*z);x.fillStyle="#111";x.fillRect(a*z,b*z,7*z,7*z);x.fillStyle="#fff";x.fillRect((a+1)*z,(b+1)*z,5*z,5*z);x.fillStyle="#111";x.fillRect((a+2)*z,(b+2)*z,3*z,3*z)})}
+function drawQR(){const c=$("#qr");if(!c)return;const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,150,150);
+if(!window.qrcode){x.fillStyle="#111";x.font="14px sans-serif";x.fillText(c.dataset.id,40,80);return}
+const q=qrcode(0,"M");q.addData(c.dataset.id);q.make();const n=q.getModuleCount(),z=150/n;x.fillStyle="#111";
+for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(q.isDark(r,k))x.fillRect(k*z,r*z,Math.ceil(z),Math.ceil(z))}
+let camStream=null,camLock=0;
+function stopCam(){if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null}}
+async function startCam(){const cam=document.querySelector(".cam"),msg=$("#camMsg"),btn=$("#camBtn");
+if(!navigator.mediaDevices?.getUserMedia){msg.textContent="المتصفح ده مش بيدعم الكاميرا. اكتب الكود أو الاسم.";return}
+try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"},audio:false})}catch(e){msg.textContent="مقدرتش أفتح الكاميرا. اسمح للموقع بالكاميرا من إعدادات المتصفح، أو اكتب الكود.";return}
+const v=document.createElement("video");v.setAttribute("playsinline","");v.muted=true;v.srcObject=camStream;cam.prepend(v);await v.play();btn.textContent="إيقاف الكاميرا";msg.textContent="";
+const cv=document.createElement("canvas"),cx=cv.getContext("2d",{willReadFrequently:true});
+(function loop(){if(!camStream||!document.body.contains(v))return stopCam();
+if(v.readyState>=2&&window.jsQR&&Date.now()>camLock){cv.width=v.videoWidth;cv.height=v.videoHeight;cx.drawImage(v,0,0);const r=jsQR(cx.getImageData(0,0,cv.width,cv.height).data,cv.width,cv.height,{inversionAttempts:"dontInvert"});
+if(r&&r.data){camLock=Date.now()+2500;if(navigator.vibrate)navigator.vibrate(80);const code=r.data.trim();if(view==="scan")showStudent(code);else{const st=students.find(x=>x.id.toLowerCase()===code.toLowerCase());if(st){cur=st;$("#nres").innerHTML=V.notesCard(st);nCalc()}else toast("الكود ده مش موجود")}}}
+requestAnimationFrame(loop)})()}
 
 function showStudent(code){const s=students.find(x=>x.id.toLowerCase()===code.trim().toLowerCase());const r=$("#result");
 if(!s){r.innerHTML=`<p class="muted">الكود ${code} مش موجود. اتأكد منه أو سجّل الطالب كطالب جديد.</p>`;return}
@@ -419,7 +436,7 @@ ${s.diffDue?`<button class="btn" data-act="diff">استلام الفرق ${s.dif
 r.dataset.id=s.id}
 
 function nCalc(){let t=0;document.querySelectorAll("[id^=nb]:checked:not(:disabled)").forEach(x=>t+=+x.dataset.p);if($("#useP")?.checked)document.querySelectorAll("[id^=pp]:checked").forEach(x=>t-=+x.dataset.a);t=Math.max(0,t);const el=$("#nTot");if(el)el.textContent=t+" ج";return t}
-function render(){if(view!=="stu")expelArm=false;$("#nav").innerHTML=NAV[role].map(([k,l])=>`<button data-v="${k}" class="${k===view?"on":""}">${l}</button>`).join("");$("#main").innerHTML=V[view]();drawQR();applySearch()}
+function render(){stopCam();if(view!=="stu")expelArm=false;$("#nav").innerHTML=NAV[role].map(([k,l])=>`<button data-v="${k}" class="${k===view?"on":""}">${l}</button>`).join("");$("#main").innerHTML=V[view]();drawQR();applySearch()}
 function openStu(id){cur=students.find(x=>x.id===id);view="stu";q="";render();scrollTo(0,0)}
 document.addEventListener("click",e=>{const t=e.target.closest("button")||e.target.closest("tr[data-open],tr[data-asst]");if(!t)return;
 if(t.dataset.role){role=t.dataset.role;view=NAV[role][0][0];document.querySelectorAll(".roles button").forEach(b=>b.classList.toggle("on",b===t));render()}
@@ -450,6 +467,7 @@ if(a==="waive"){s.diffDue=0;toast("الطالب اتعفى من الفرق (بإ
 if(a==="skip"){$("#result").innerHTML='<p class="muted">جاهز للطالب اللي بعده.</p>';return}
 showStudent(s.id)}
 else if(t.id==="net"){online=!online;if(online&&pending){toast(`النت رجع · اترفع ${pending} عملية`);pending=0}else if(!online)toast("وضع بدون نت: السكان والتسجيل شغالين عادي");upd()}
+else if(t.id==="camBtn"){if(camStream){stopCam();document.querySelector(".cam video")?.remove();t.textContent="تشغيل الكاميرا"}else startCam()}
 else if(t.id==="theme"){const d=document.documentElement,dark=d.dataset.theme?d.dataset.theme==="dark":matchMedia("(prefers-color-scheme:dark)").matches;d.dataset.theme=dark?"light":"dark";t.textContent=dark?"الوضع الداكن":"الوضع الفاتح"}
 else if(t.id==="out"){t.disabled=true;t.textContent="اتسجل الانصراف 6:12 م";toast("اتسجل انصرافك")}});
 document.addEventListener("input",e=>{const id=e.target.id,v=e.target.value.trim();
